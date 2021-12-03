@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  wireshark:
+    image: lscr.io/linuxserver/wireshark
+    container_name: wireshark
+    cap_add:
+      - NET_ADMIN
+    # network_mode: host
+    environment:
+      - PUID=501
+      - PGID=20
+    ports:
+      - 3000:3000 #optional
+    restart: unless-stopped

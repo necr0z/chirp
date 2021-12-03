@@ -1,0 +1,64 @@
+version: '3'
+
+networks:
+  postgres:
+    driver: bridge
+
+services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      PGDATA: /data/postgres
+    # volumes:
+    #    - postgres:/data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - postgres
+    restart: unless-stopped
+    
+  chirp:
+    # container_name: chirp
+    image: testchirp
+    stdin_open: true
+    tty: true
+    depends_on:
+      - db
+    ports:
+      - "4000:4000"
+    networks:
+      - postgres
+    restart: unless-stopped
+    env_file:
+      - chirp.env
+
+  # pwscript:
+  #   image: pwscript
+  # wireshark:
+  #   image: lscr.io/linuxserver/wireshark
+  #   container_name: wireshark
+  #   cap_add:
+  #     - NET_ADMIN
+  #   ports:
+  #     - "3000:3000"
+  #   # network_mode: host
+  #   networks:
+  #     - postgres
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - TZ=China
+  #   # volumes:
+  #   #   - /path/to/config:/config
+  #   restart: unless-stopped
+
+  # tcpdump:
+  #    image: kaazing/tcpdump
+  #    networks:
+  #      - postgres
+  #    volumes:
+  #      - ./tcpdump:/tcpdump
+
+    # command: "mix ecto.setup; sleep(10); mix phx.server"
